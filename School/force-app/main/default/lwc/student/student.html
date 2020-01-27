@@ -1,0 +1,78 @@
+<template>
+
+    <!--Insert student-->
+    <lightning-card title="New Student" icon-name="standard:record">
+        <lightning-record-edit-form object-api-name="Student__c" onsuccess={handleSuccess}>
+            <lightning-messages></lightning-messages>
+            <div class="slds-m-around_medium">
+                <lightning-input-field field-name='Id' value={studentId}></lightning-input-field>
+                <lightning-input-field field-name='Name'></lightning-input-field>
+                <lightning-input-field field-name='Last_Name__c'></lightning-input-field>
+                <lightning-input-field field-name='Classroom__c'></lightning-input-field>
+
+                <div class="slds-m-top_medium">
+                    <lightning-button variant="brand" type="submit" name="save" label="Save">
+                    </lightning-button>
+                </div>
+            </div>
+        </lightning-record-edit-form>
+    </lightning-card>
+
+    <!--Students list-->
+    <lightning-card title="Student records" icon-name="custom:custom63">
+
+        <!--Delete button and selected rows count-->
+        <div class="slds-grid slds-gutters">
+            <div class="slds-col">
+                <span>
+                    <p style="margin-left: 5%">Selected Records: <b style="color:red;">{recordsCount}</b></p>
+                </span>
+            </div>
+            <div class="slds-col">
+                <span>
+                    <lightning-button label={buttonLabel} icon-name="utility:delete" disabled={isTrue}
+                        variant="destructive" onclick={deleteStudents} style="margin-left: 40%">
+                    </lightning-button>
+                </span>
+            </div>
+        </div><br />
+
+        <div class="slds-m-around_medium">
+            <template if:true={student.data}>
+                <!--Students table-->
+                <lightning-datatable key-field="Id" data={currentPageData} columns={columns} onsave={handleSave}
+                    draft-values={draftValues} onrowselection={getSelectedRecords}>
+                </lightning-datatable>
+            </template>
+            <template if:true={student.error}>
+                <!-- handle Apex error -->
+            </template>
+        </div>
+
+        <!--Pagination-->
+        <div class="slds-align_absolute-center">
+            <ul class="slds-button-group-row">
+                <template if:true={hasPrev}>
+                    <li class="slds-button-group-item">
+                        <button class="slds-button slds-button_neutral" onclick={onPrev}> prev
+                        </button>
+                    </li>
+                </template>
+                <template for:each={pagesList} for:item="pageNumber">
+                    <li class="slds-button-group-item" key={pageNumber}>
+                        <button data-id={pageNumber} class="slds-button slds-button_neutral"
+                            onclick={onPageClick}>{pageNumber}</button>
+                    </li>
+                </template>
+                <template if:true={hasNext}>
+                    <li class="slds-button-group-item">
+                        <button class="slds-button slds-button_neutral" onclick={onNext}>next</button>
+                    </li>
+                </template>
+            </ul>
+        </div>
+
+
+    </lightning-card>
+
+</template>
