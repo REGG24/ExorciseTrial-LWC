@@ -17,7 +17,7 @@ import delSelectedStus from '@salesforce/apex/SchoolControllerLWC.deleteStudents
 const COLS = [
     { label: 'First Name', fieldName: 'Name', editable: true },
     { label: 'Last Name', fieldName: 'Last_Name__c', editable: true },
-    { label: 'Classroom', fieldName: 'Classroom__c.Name', editable: true }
+    { label: 'Classroom', fieldName: 'Classroom__c', editable: true }
 ];
 
 export default class Recordeditform extends LightningElement {
@@ -32,7 +32,7 @@ export default class Recordeditform extends LightningElement {
     student;
 
     //delete
-    @track buttonLabel = 'Delete Selected Contacts';
+    @track buttonLabel = 'Delete';
     @track isTrue = false;
     @track recordsCount = 0
     // non-reactive variables(delete)
@@ -51,6 +51,7 @@ export default class Recordeditform extends LightningElement {
                 variant: 'success',
             }),
         );
+
         // Display fresh data in the datatable
         return refreshApex(this.student);
     }
@@ -94,7 +95,7 @@ export default class Recordeditform extends LightningElement {
     //delete
     // retrieving the data using wire service
     @wire(getStudentList)
-    contacts(result) {
+    students(result) {
         this.refreshTable = result;
         if (result.data) {
             this.data = result.data;
@@ -133,7 +134,7 @@ export default class Recordeditform extends LightningElement {
     deleteStudents() {
         if (this.selectedRecords) {
             // setting values to reactive variables
-            this.buttonLabel = 'Processing....';
+            this.buttonLabel = 'Deleting....';
             this.isTrue = true;
 
             // calling apex class to delete selected records.
@@ -147,14 +148,14 @@ export default class Recordeditform extends LightningElement {
             .then(result => {
                 window.console.log('result ====> ' + result);
 
-                this.buttonLabel = 'Delete Selected Contacts';
+                this.buttonLabel = 'Delete';
                 this.isTrue = false;
 
                 // showing success message
                 this.dispatchEvent(
                     new ShowToastEvent({
                         title: 'Success!!',
-                        message: this.recordsCount + ' Contacts are deleted.',
+                        message: this.recordsCount + ' Students are deleted.',
                         variant: 'success'
                     }),
                 );
@@ -166,13 +167,12 @@ export default class Recordeditform extends LightningElement {
 
                 // refreshing table data using refresh apex
                 return refreshApex(this.refreshTable);
-
             })
             .catch(error => {
                 window.console.log(error);
                 this.dispatchEvent(
                     new ShowToastEvent({
-                        title: 'Error while getting Contacts',
+                        title: 'Error while getting Students',
                         message: error.message,
                         variant: 'error'
                     }),

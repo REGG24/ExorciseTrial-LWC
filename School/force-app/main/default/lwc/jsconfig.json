@@ -3,32 +3,20 @@
         "experimentalDecorators": true,
         "baseUrl": ".",
         "paths": {
-            "c/insertStudent": [
-                "insertStudent/insertStudent.js"
-            ],
-            "c/InsertClassroom": [
-                "InsertClassroom/InsertClassroom.js"
+            "c/dataTablePagination": [
+                "dataTablePagination/dataTablePagination.js"
             ],
             "c/insertClassroom": [
                 "insertClassroom/insertClassroom.js"
             ],
-            "c/StudentTable": [
-                "StudentTable/StudentTable.js"
-            ],
-            "c/studentTable": [
-                "studentTable/studentTable.js"
-            ],
-            "c/Student": [
-                "Student/Student.js"
+            "c/insertStudent": [
+                "insertStudent/insertStudent.js"
             ],
             "c/student": [
                 "student/student.js"
             ],
-            "c/PaginationExample": [
-                "PaginationExample/PaginationExample.js"
-            ],
-            "c/dataTablePagination": [
-                "dataTablePagination/dataTablePagination.js"
+            "c/studentTable": [
+                "studentTable/studentTable.js"
             ]
         }
     },
