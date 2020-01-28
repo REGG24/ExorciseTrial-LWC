@@ -1,7 +1,7 @@
 <template>
 
     <!--Insert student-->
-    <lightning-card title="New Student" icon-name="standard:record">
+    <lightning-card title="New Studentfff" icon-name="standard:record">
         <lightning-record-edit-form object-api-name="Student__c" onsuccess={handleSuccess}>
             <lightning-messages></lightning-messages>
             <div class="slds-m-around_medium">
@@ -55,7 +55,7 @@
             <ul class="slds-button-group-row">
                 <template if:true={hasPrev}>
                     <li class="slds-button-group-item">
-                        <button class="slds-button slds-button_neutral" onclick={onPrev}> prev
+                        <button class="slds-button slds-button_neutral" onclick={onPrev}>Prev
                         </button>
                     </li>
                 </template>
@@ -67,7 +67,7 @@
                 </template>
                 <template if:true={hasNext}>
                     <li class="slds-button-group-item">
-                        <button class="slds-button slds-button_neutral" onclick={onNext}>next</button>
+                        <button class="slds-button slds-button_neutral" onclick={onNext}>Next</button>
                     </li>
                 </template>
             </ul>

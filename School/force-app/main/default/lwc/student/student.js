@@ -28,6 +28,7 @@ export default class Recordeditform extends LightningElement {
     @track error;
     @track columns = COLS;
     @track draftValues = [];
+
     @wire(getStudentList)
     student;
 
@@ -52,8 +53,8 @@ export default class Recordeditform extends LightningElement {
             }),
         );
 
-        // Display fresh data in the datatable
-        return refreshApex(this.student);
+        // Display fresh data in the datatable and refresh pagination
+        return refreshApex(this.student, this.setPages(this.data));
     }
 
     //table(update)
@@ -198,11 +199,21 @@ export default class Recordeditform extends LightningElement {
         });
     }
     get pagesList() {
+        /*
         let mid = Math.floor(this.set_size / 2) + 1;
         if (this.page > mid) {
             return this.pages.slice(this.page - mid, this.page + mid - 1);
         }
         return this.pages.slice(0, this.set_size);
+        */
+        //my idea:
+        let pages = Math.ceil(this.data.length / this.perpage);
+        let pages_list = [];
+        for (let i = 0; i < pages; i++) {
+            pages_list.push(i + 1);
+        }
+        return pages_list;
+
     }
     async connectedCallback() {
         this.data = await getStudentList();
@@ -217,15 +228,27 @@ export default class Recordeditform extends LightningElement {
     }
     setPages = (data) => {
         let numberOfPages = Math.ceil(data.length / this.perpage);
+        //window.console.log("data.length: " + data.length);
+        //window.console.log("numberOfPages: " + numberOfPages);
         for (let index = 1; index <= numberOfPages; index++) {
             this.pages.push(index);
         }
+        //window.console.log("See the content of pages");
+        //for (let index = 0; index < this.pages.length; index++) {
+        //    window.console.log("page 0: " + this.pages[index]);
+        //}
     }
     get hasPrev() {
         return this.page > 1;
     }
     get hasNext() {
-        return this.page < this.pages.length
+        window.console.log("this.page: " + this.page);
+        window.console.log("this.pages.length: " + this.pages.length);
+        //return this.page < this.pages.length  original
+        window.console.log("data.length: " + this.data.length);
+        let pages = Math.ceil(this.data.length / this.perpage);
+        window.console.log("pages length (mio): " + pages);
+        return this.page < pages;
     }
     onNext = () => {
         ++this.page;
