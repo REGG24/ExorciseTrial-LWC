@@ -1,17 +1,18 @@
 <template>
-    <!-- *****STUDENTS******-->
+    <!-- *****TEACHERS******-->
 
-    <!--Insert student-->
-    <lightning-card title="Students" icon-name="standard:record">
-        <lightning-record-edit-form object-api-name="Student__c" onsuccess={handleSuccess}>
+    <!--Insert teacher-->
+    <lightning-card title="Teachers" icon-name="standard:record">
+        <lightning-record-edit-form object-api-name="Teacher__c" onsuccess={handleSuccess}>
             <lightning-messages></lightning-messages>
             <div class="slds-m-around_medium">
-                <lightning-input-field field-name='Id' value={studentId}></lightning-input-field>
+                <lightning-input-field field-name='Id' value={teacherId}></lightning-input-field>
                 <lightning-input-field field-name='Name'></lightning-input-field>
                 <lightning-input-field field-name='Last_Name__c'></lightning-input-field>
                 <lightning-input-field field-name='Classroom__c'></lightning-input-field>
 
                 <div class="slds-m-top_medium">
+
                     <lightning-button variant="brand" type="submit" name="save" label="Save">
                     </lightning-button>
                 </div>
@@ -19,18 +20,18 @@
         </lightning-record-edit-form>
 
 
-        <!--Students search-->
-        <lightning-input type="search" onchange={handleKeyChange} class="slds-m-bottom_small" label="Search student"
+        <!--Teachers search-->
+        <lightning-input type="search" onchange={handleKeyChange} class="slds-m-bottom_small" label="Search teacher"
             value={searchFilter}></lightning-input>
 
-        <!--Students table-->
+        <!--Teachers table-->
         <div class="slds-m-around_medium">
-            <template if:true={student.data}>
+            <template if:true={teacher.data}>
                 <lightning-datatable key-field="Id" data={currentPageData} columns={columns} onsave={handleSave}
                     draft-values={draftValues} onrowselection={getSelectedRecords}>
                 </lightning-datatable>
             </template>
-            <template if:true={student.error}>
+            <template if:true={teacher.error}>
                 <!-- handle Apex error -->
             </template>
         </div>
@@ -45,7 +46,7 @@
             <div class="slds-col">
                 <span>
                     <lightning-button label={buttonLabel} icon-name="utility:delete" disabled={isTrue}
-                        variant="destructive" onclick={deleteStudents} style="margin-left: 65%">
+                        variant="destructive" onclick={deleteTeachers} style="margin-left: 65%">
                     </lightning-button>
                 </span>
             </div>

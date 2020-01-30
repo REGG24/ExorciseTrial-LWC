@@ -1,18 +1,17 @@
-/* ******STUDENTS IMPORTS********* */
 //table an insert
 import { LightningElement, wire, track, api } from 'lwc';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
 //update
-import getStudentList from '@salesforce/apex/SchoolControllerLWC.getStudentList';
+import getTeacherList from '@salesforce/apex/SchoolControllerLWC.getTeacherList';
 import { updateRecord } from 'lightning/uiRecordApi';
 import { refreshApex } from '@salesforce/apex';
-import FIRSTNAME_FIELD from '@salesforce/schema/Student__c.Name';
-import LASTNAME_FIELD from '@salesforce/schema/Student__c.Last_Name__c';
-import CLASSROOM_FIELD from '@salesforce/schema/Student__c.Classroom__c';
-import ID_FIELD from '@salesforce/schema/Student__c.Id';
+import FIRSTNAME_FIELD from '@salesforce/schema/Teacher__c.Name';
+import LASTNAME_FIELD from '@salesforce/schema/Teacher__c.Last_Name__c';
+import CLASSROOM_FIELD from '@salesforce/schema/Teacher__c.Classroom__c';
+import ID_FIELD from '@salesforce/schema/Teacher__c.Id';
 
-import delSelectedStus from '@salesforce/apex/SchoolControllerLWC.deleteStudents';
+import delSelectedStus from '@salesforce/apex/SchoolControllerLWC.deleteTeachers';
 
 //table
 const COLS = [
@@ -23,12 +22,12 @@ const COLS = [
 
 export default class Recordeditform extends LightningElement {
 
-    /* ******STUDENTS********* */
+
     //search   
     @api searchFilter = '';
-    @wire(getStudentList, { searchFilter: '$searchFilter' })
-    getStudentList(result) {
-        this.student = result;
+    @wire(getTeacherList, { searchFilter: '$searchFilter' })
+    getTeacherList(result) {
+        this.teacher = result;
         if (result.data) {
             this.data = result.data;
         } else if (result.error) {
@@ -38,19 +37,19 @@ export default class Recordeditform extends LightningElement {
 
     handleKeyChange(event) {
         this.searchFilter = event.target.value;
-        return refreshApex(this.student);
+        return refreshApex(this.teacher);
     }
 
     //insert
-    @track studentId;
+    @track teacherId;
 
     //table update
     @track error;
     @track columns = COLS;
     @track draftValues = [];
 
-    @wire(getStudentList)
-    student;
+    @wire(getTeacherList)
+    teacher;
 
     //delete
     @track buttonLabel = 'Delete';
@@ -64,11 +63,11 @@ export default class Recordeditform extends LightningElement {
 
     //insert
     handleSuccess(event) {
-        this.studentId = event.detail.id;
+        this.teacherId = event.detail.id;
         this.dispatchEvent(
             new ShowToastEvent({
                 title: 'Success',
-                message: 'Student created',
+                message: 'Teacher created',
                 variant: 'success',
             }),
         );
@@ -76,7 +75,7 @@ export default class Recordeditform extends LightningElement {
         //update the classroom table that is in another component
         this.updateClassroomsTable();
         // Display fresh data in the datatable and refresh pagination
-        return refreshApex(this.student, this.setPages(this.data));
+        return refreshApex(this.teacher, this.setPages(this.data));
     }
 
     updateClassroomsTable() {
@@ -101,7 +100,7 @@ export default class Recordeditform extends LightningElement {
                 this.dispatchEvent(
                     new ShowToastEvent({
                         title: 'Success',
-                        message: 'Student updated',
+                        message: 'Teacher updated',
                         variant: 'success'
                     })
                 );
@@ -109,7 +108,7 @@ export default class Recordeditform extends LightningElement {
                 this.draftValues = [];
 
                 // Display fresh data in the datatable
-                return refreshApex(this.student);
+                return refreshApex(this.teacher);
             }).catch(error => {
                 this.dispatchEvent(
                     new ShowToastEvent({
@@ -123,8 +122,8 @@ export default class Recordeditform extends LightningElement {
 
     //delete
     // retrieving the data using wire service
-    @wire(getStudentList)
-    students(result) {
+    @wire(getTeacherList)
+    teachers(result) {
         this.refreshTable = result;
         if (result.data) {
             this.data = result.data;
@@ -160,7 +159,7 @@ export default class Recordeditform extends LightningElement {
 
 
     // delete records process function
-    deleteStudents() {
+    deleteTeachers() {
         if (this.selectedRecords) {
             // setting values to reactive variables
             this.buttonLabel = 'Deleting....';
@@ -184,7 +183,7 @@ export default class Recordeditform extends LightningElement {
                 this.dispatchEvent(
                     new ShowToastEvent({
                         title: 'Success!!',
-                        message: this.recordsCount + ' Students are deleted.',
+                        message: this.recordsCount + ' Teachers are deleted.',
                         variant: 'success'
                     }),
                 );
@@ -201,7 +200,7 @@ export default class Recordeditform extends LightningElement {
                 window.console.log(error);
                 this.dispatchEvent(
                     new ShowToastEvent({
-                        title: 'Error while getting Students',
+                        title: 'Error while getting Teachers',
                         message: error.message,
                         variant: 'error'
                     }),
@@ -243,7 +242,7 @@ export default class Recordeditform extends LightningElement {
         return pages_list;
     }
     async connectedCallback() {
-        this.data = await getStudentList();
+        this.data = await getTeacherList();
         this.setPages(this.data);
     }
     pageData = () => {

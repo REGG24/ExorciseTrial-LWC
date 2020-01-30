@@ -3,8 +3,8 @@
         "experimentalDecorators": true,
         "baseUrl": ".",
         "paths": {
-            "c/dataTablePagination": [
-                "dataTablePagination/dataTablePagination.js"
+            "c/classroom": [
+                "classroom/classroom.js"
             ],
             "c/generalSchool": [
                 "generalSchool/generalSchool.js"
@@ -18,8 +18,8 @@
             "c/student": [
                 "student/student.js"
             ],
-            "c/studentTable": [
-                "studentTable/studentTable.js"
+            "c/teacher": [
+                "teacher/teacher.js"
             ]
         }
     },
