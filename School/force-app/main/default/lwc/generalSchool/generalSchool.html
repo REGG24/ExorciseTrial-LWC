@@ -1,0 +1,160 @@
+<template>
+    <!-- *****STUDENTS******-->
+
+    <!--Insert student-->
+    <lightning-card title="Students" icon-name="standard:record">
+        <lightning-record-edit-form object-api-name="Student__c" onsuccess={handleSuccess}>
+            <lightning-messages></lightning-messages>
+            <div class="slds-m-around_medium">
+                <lightning-input-field field-name='Id' value={studentId}></lightning-input-field>
+                <lightning-input-field field-name='Name'></lightning-input-field>
+                <lightning-input-field field-name='Last_Name__c'></lightning-input-field>
+                <lightning-input-field field-name='Classroom__c'></lightning-input-field>
+
+                <div class="slds-m-top_medium">
+                    <lightning-button variant="brand" type="submit" name="save" label="Save">
+                    </lightning-button>
+                </div>
+            </div>
+        </lightning-record-edit-form>
+
+
+        <!--Students search-->
+        <lightning-input type="search" onchange={handleKeyChange} class="slds-m-bottom_small" label="Search student"
+            value={searchFilter}></lightning-input>
+
+        <!--Students table-->
+        <div class="slds-m-around_medium">
+            <template if:true={student.data}>
+                <lightning-datatable key-field="Id" data={currentPageData} columns={columns} onsave={handleSave}
+                    draft-values={draftValues} onrowselection={getSelectedRecords}>
+                </lightning-datatable>
+            </template>
+            <template if:true={student.error}>
+                <!-- handle Apex error -->
+            </template>
+        </div>
+
+        <!--Delete button and selected rows count-->
+        <div class="slds-grid slds-gutters">
+            <div class="slds-col">
+                <span>
+                    <p style="margin-left: 5%">Selected Records: <b style="color:rgb(34, 11, 8);">{recordsCount}</b></p>
+                </span>
+            </div>
+            <div class="slds-col">
+                <span>
+                    <lightning-button label={buttonLabel} icon-name="utility:delete" disabled={isTrue}
+                        variant="destructive" onclick={deleteStudents} style="margin-left: 65%">
+                    </lightning-button>
+                </span>
+            </div>
+        </div>
+        <br />
+
+        <!--Pagination-->
+        <div class="slds-align_absolute-center" data-buttons="student">
+            <ul class="slds-button-group-row">
+                <template if:true={hasPrev}>
+                    <li class="slds-button-group-item">
+                        <button class="slds-button slds-button_neutral" onclick={onPrev}>Prev
+                        </button>
+                    </li>
+                </template>
+                <template for:each={pagesList} for:item="pageNumber">
+                    <li class="slds-button-group-item" key={pageNumber}>
+                        <button data-id={pageNumber} class="slds-button slds-button_neutral" onclick={onPageClick}
+                            data-name="student">{pageNumber}</button>
+                    </li>
+                </template>
+                <template if:true={hasNext}>
+                    <li class="slds-button-group-item">
+                        <button class="slds-button slds-button_neutral" onclick={onNext}>Next</button>
+                    </li>
+                </template>
+            </ul>
+        </div>
+
+    </lightning-card>
+
+
+
+
+
+    <!-- *****CLASSROOMS******-->
+
+    <!--Insert classroom-->
+    <lightning-card title="Classrooms" icon-name="standard:record">
+        <lightning-record-edit-form object-api-name="Classroom__c" onsuccess={handleSuccessC}>
+            <lightning-messages></lightning-messages>
+            <div class="slds-m-around_medium">
+                <!--<lightning-input-field field-name='Id' value={classroomId}></lightning-input-field>-->
+                <lightning-input-field field-name='Name'></lightning-input-field>
+                <div class="slds-m-top_medium">
+                    <lightning-button variant="brand" type="submit" name="save" label="Save">
+                    </lightning-button>
+                </div>
+            </div>
+        </lightning-record-edit-form>
+
+
+        <!--Search classrooms-->
+        <lightning-input type="search" onchange={handleKeyChangeC} class="slds-m-bottom_small" label="Search classroom"
+            value={searchFilterC}></lightning-input>
+
+        <!--Classroom table-->
+        <div class="slds-m-around_medium">
+            <template if:true={classroom.data}>
+                <lightning-datatable key-field="Id" data={currentPageDataC} columns={columnsC} onsave={handleSaveC}
+                    draft-values={draftValuesC} onrowselection={getSelectedRecordsC}>
+                </lightning-datatable>
+            </template>
+            <template if:true={classroom.error}>
+                <!-- handle Apex error -->
+            </template>
+        </div>
+
+        <!--Delete button and selected rows count-->
+        <div class="slds-grid slds-gutters">
+            <div class="slds-col">
+                <span>
+                    <p style="margin-left: 5%">Selected Records: <b style="color:rgb(34, 11, 8);">{recordsCountC}</b>
+                    </p>
+                </span>
+            </div>
+            <div class="slds-col">
+                <span>
+                    <lightning-button label={buttonLabelC} icon-name="utility:delete" disabled={isTrueC}
+                        variant="destructive" onclick={deleteClassrooms} style="margin-left: 65%">
+                    </lightning-button>
+                </span>
+            </div>
+        </div>
+        <br />
+
+        <!--Pagination-->
+        <div class="slds-align_absolute-center">
+            <ul class="slds-button-group-row">
+                <template if:true={hasPrevC}>
+                    <li class="slds-button-group-item">
+                        <button class="slds-button slds-button_neutral" onclick={onPrevC}>Prev
+                        </button>
+                    </li>
+                </template>
+                <template for:each={pagesListC} for:item="pageNumberC">
+                    <li class="slds-button-group-item" key={pageNumberC}>
+                        <button data-id={pageNumberC} class="slds-button slds-button_neutral" onclick={onPageClickC}
+                            data-name="classroom">{pageNumberC}</button>
+                    </li>
+                </template>
+                <template if:true={hasNextC}>
+                    <li class="slds-button-group-item">
+                        <button class="slds-button slds-button_neutral" onclick={onNextC}>Next</button>
+                    </li>
+                </template>
+            </ul>
+        </div>
+
+    </lightning-card>
+
+</template>

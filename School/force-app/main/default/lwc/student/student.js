@@ -1,5 +1,5 @@
 //table an insert
-import { LightningElement, wire, track } from 'lwc';
+import { LightningElement, wire, track, api } from 'lwc';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
 //update
@@ -17,10 +17,34 @@ import delSelectedStus from '@salesforce/apex/SchoolControllerLWC.deleteStudents
 const COLS = [
     { label: 'First Name', fieldName: 'Name', editable: true },
     { label: 'Last Name', fieldName: 'Last_Name__c', editable: true },
-    { label: 'Classroom', fieldName: 'Classroom__c', editable: true }
+    { label: 'Classroom', fieldName: 'Classroom__c', editable: true, type: LightningElement }
 ];
 
 export default class Recordeditform extends LightningElement {
+
+    //search   
+    @api searchFilter = '';
+    result;
+    @wire(getStudentList, { searchFilter: '$searchFilter' })
+    getStudentList(result) {
+        this.result = result;
+        if (result.data) {
+            this.data = result.data;
+        } else if (result.error) {
+            this.error = result.error;
+        }
+    }
+
+    handleKeyChange(event) {
+        this.searchFilter = event.target.value;
+        window.console.log('hangleKeyChange searchFilter: ' + this.searchFilter);
+        window.console.log('items:');
+        for (let i = 0; i < this.result.length; i++) {
+            window.console.log('item: ' + i);
+        }
+        return refreshApex(this.result);
+    }
+
     //insert
     @track studentId;
 
@@ -213,7 +237,6 @@ export default class Recordeditform extends LightningElement {
             pages_list.push(i + 1);
         }
         return pages_list;
-
     }
     async connectedCallback() {
         this.data = await getStudentList();
@@ -242,12 +265,12 @@ export default class Recordeditform extends LightningElement {
         return this.page > 1;
     }
     get hasNext() {
-        window.console.log("this.page: " + this.page);
-        window.console.log("this.pages.length: " + this.pages.length);
+        //window.console.log("this.page: " + this.page);
+        //window.console.log("this.pages.length: " + this.pages.length);
         //return this.page < this.pages.length  original
-        window.console.log("data.length: " + this.data.length);
+        //window.console.log("data.length: " + this.data.length);
         let pages = Math.ceil(this.data.length / this.perpage);
-        window.console.log("pages length (mio): " + pages);
+        //window.console.log("pages length (mio): " + pages);
         return this.page < pages;
     }
     onNext = () => {

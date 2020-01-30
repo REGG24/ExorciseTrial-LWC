@@ -6,6 +6,9 @@
             "c/dataTablePagination": [
                 "dataTablePagination/dataTablePagination.js"
             ],
+            "c/generalSchool": [
+                "generalSchool/generalSchool.js"
+            ],
             "c/insertClassroom": [
                 "insertClassroom/insertClassroom.js"
             ],
