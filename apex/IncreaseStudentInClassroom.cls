@@ -13,13 +13,19 @@ trigger IncreaseStudentInClassroom on Student__c (before insert) {
        			//getting the current number of students
        			List<Classroom__c> classroom = [select numStudents__c from classroom__c where Id = :classroom_id];
        			Decimal num = classroom[0].numStudents__c;
-        		System.debug('num: '+num);
-                classrooms.add(
-       				new Classroom__c(
-                		numStudents__c = num + 1,
-                		Id = s.Classroom__c
-            		)
-      	 		);                                            			
+            	System.debug('num: '+num);
+            	if(num < 10){               	
+                	classrooms.add(
+       					new Classroom__c(
+                			numStudents__c = num + 1,
+                			Id = s.Classroom__c
+            			)
+      	 			);    
+                }else{
+                    //this works for LWC but not for visualforce
+                   s.addError('Cannot insert more than 10 students to the same classroom');
+                }
+        		                                        			
         }
             
     }

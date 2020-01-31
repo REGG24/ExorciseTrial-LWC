@@ -14,12 +14,17 @@ trigger IncreaseTeacherInClassroom on Teacher__c (before insert) {
        			List<Classroom__c> classroom = [select numTeachers__c from classroom__c where Id = :classroom_id];
        			Decimal num = classroom[0].numTeachers__c;
         		System.debug('num: '+num);
-                classrooms.add(
-       				new Classroom__c(
-                		numTeachers__c = num + 1,
-                		Id = s.Classroom__c
-            		)
-      	 		);                                            			
+            	if(num < 5){
+                	classrooms.add(
+       					new Classroom__c(
+                			numTeachers__c = num + 1,
+                			Id = s.Classroom__c
+            			)
+      	 			);
+                }else{
+                    //this works for LWC but not for visualforce
+                   s.addError('Cannot insert more than 5 teachers to the same classroom');
+                }
         }
             
     }

@@ -9,12 +9,6 @@
             "c/generalSchool": [
                 "generalSchool/generalSchool.js"
             ],
-            "c/insertClassroom": [
-                "insertClassroom/insertClassroom.js"
-            ],
-            "c/insertStudent": [
-                "insertStudent/insertStudent.js"
-            ],
             "c/student": [
                 "student/student.js"
             ],
