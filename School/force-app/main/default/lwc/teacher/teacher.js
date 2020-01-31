@@ -197,14 +197,25 @@ export default class Recordeditform extends LightningElement {
                 return refreshApex(this.refreshTable);
             })
             .catch(error => {
+                this.buttonLabel = 'Delete';
+                this.isTrue = false;
+
                 window.console.log(error);
                 this.dispatchEvent(
                     new ShowToastEvent({
-                        title: 'Error while getting Teachers',
+                        title: 'Error while getting Teachers, maybe you are trying to delete a teacher that has a related classroom',
                         message: error.message,
                         variant: 'error'
                     }),
                 );
+
+                // Clearing selected row indexs 
+                this.template.querySelector('lightning-datatable').selectedRows = [];
+
+                this.recordsCount = 0;
+
+                // refreshing table data using refresh apex
+                return refreshApex(this.refreshTable);
             });
     }
 

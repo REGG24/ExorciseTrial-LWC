@@ -197,7 +197,7 @@ export default class Recordeditform extends LightningElement {
                 );
 
                 // Clearing selected row indexs 
-                this.template.querySelector('lightning-datatable').selectedRowsC = [];
+                this.template.querySelector('lightning-datatable').selectedRows = [];
 
                 this.recordsCountC = 0;
 
@@ -205,14 +205,23 @@ export default class Recordeditform extends LightningElement {
                 return refreshApex(this.classroom);
             })
             .catch(error => {
+                this.buttonLabelC = 'Delete';
+                this.isTrueC = false;
                 window.console.log(error);
                 this.dispatchEvent(
                     new ShowToastEvent({
-                        title: 'Error while getting Classrooms',
+                        title: 'Error while getting Classrooms, maybe you are trying to delete a Classroom that has a related Student or Teacher',
                         message: error.message,
                         variant: 'error'
                     }),
                 );
+                // Clearing selected row indexs 
+                this.template.querySelector('lightning-datatable').selectedRows = [];
+
+                this.recordsCountC = 0;
+
+                // refreshing table data using refresh apex
+                return refreshApex(this.classroom);
             });
     }
 
