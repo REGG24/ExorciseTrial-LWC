@@ -18,7 +18,8 @@ import ID_CLASS_FIELD from '@salesforce/schema/Classroom__c.Id';
 const COLS_C = [
     { label: 'Classroom Name', fieldName: 'Name', editable: true },
     { label: 'Students', fieldName: 'numStudents__c', type: 'number' },
-    { label: 'Teachers', fieldName: 'numTeachers__c', type: 'number' }
+    { label: 'Teachers', fieldName: 'numTeachers__c', type: 'number' },
+    { label: 'Max capacity', fieldName: 'max_capacity__c', type: 'number' }
 ];
 
 import delSelectedClass from '@salesforce/apex/SchoolControllerLWC.deleteClassrooms';
