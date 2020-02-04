@@ -30,7 +30,8 @@ trigger UpdateClassroomInStudent on Student__c (after update) {
        			List<Classroom__c> classroom = [select numStudents__c from classroom__c where Id = :classroom_id];
        			Decimal numNew = classroom[0].numStudents__c + 1;            
             	
-            	//****************There was no classroom and now there is
+            if(classroom[0].numStudents__c < 10){
+                	//****************There was no classroom and now there is
             	if(String.isEmpty(OldId)){                    
 					idsToUpdate.put(s.Classroom__c, numNew);
                 }
@@ -44,6 +45,10 @@ trigger UpdateClassroomInStudent on Student__c (after update) {
                     	idsToUpdate.put(OldId, numOld);
                     }                	
                 }
+            }else{
+                //this works for LWC but not for visualforce
+                s.addError('Cannot insert more than 10 students to the same classroom');
+            }           	                     
         }else{
             //****There is no a new classroom and there was an old
             //getting the number of students of the old classroom

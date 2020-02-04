@@ -27,7 +27,9 @@ trigger UpdateClassroomInTeacher on Teacher__c (after update) {
             
             	//getting the number of teachers of the new classroom
        			List<Classroom__c> classroom = [select numTeachers__c from classroom__c where Id = :classroom_id];
-       			Decimal numNew = classroom[0].numTeachers__c + 1;            
+       			Decimal numNew = classroom[0].numTeachers__c + 1; 
+            
+             if(classroom[0].numTeachers__c < 5){
             	
             	//****************There was no classroom and now there is
             	if(String.isEmpty(OldId)){                    
@@ -42,7 +44,14 @@ trigger UpdateClassroomInTeacher on Teacher__c (after update) {
                     	idsToUpdate.put(s.Classroom__c, numNew);
                     	idsToUpdate.put(OldId, numOld);
                     }                	
-                }
+                }                
+             }//if(classroom[0].numTeachers__c < 5)
+             else{ 
+                  //this works for LWC but not for visualforce
+                 s.addError('Cannot insert more than 5 Teachers to the same classroom');
+             }
+            
+            
         }else{
             //****There is no a new classroom and there was an old            
             if(!String.isEmpty(OldId)){  

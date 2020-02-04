@@ -1,6 +1,15 @@
 <template>
     <!-- *****STUDENTS******-->
 
+    <!-- search component example -->
+    <!--<c-lookup-wrapper-parent></c-lookup-wrapper-parent>-->
+
+    <!-- Lightning table with search component example -->
+    <!--   
+    <c-poc-lightning-datatable key-field="Id" data={currentPageData} columns={columns} onsave={handleSave}
+        draft-values={draftValues} onrowselection={getSelectedRecords} hide-checkbox-column>
+    </c-poc-lightning-datatable> -->
+
     <!--Insert student-->
     <lightning-card title="Students" icon-name="standard:record">
         <lightning-record-edit-form object-api-name="Student__c" onsuccess={handleSuccess}>
@@ -26,9 +35,17 @@
         <!--Students table-->
         <div class="slds-m-around_medium">
             <template if:true={student.data}>
-                <lightning-datatable key-field="Id" data={currentPageData} columns={columns} onsave={handleSave}
+                <!--Without custom lookup -->
+                <!--<lightning-datatable key-field="Id" data={currentPageData} columns={columns} onsave={handleSave}
                     draft-values={draftValues} onrowselection={getSelectedRecords}>
-                </lightning-datatable>
+                </lightning-datatable> -->
+
+                <!--With custom lookup -->
+                <c-poc-lightning-datatable key-field="Id" data={currentPageData} columns={columns} onsave={handleSave}
+                    draft-values={draftValues} onrowselection={getSelectedRecords}
+                    onlookupselect={handlelookupselectclassroom}>
+                </c-poc-lightning-datatable>
+
             </template>
             <template if:true={student.error}>
                 <!-- handle Apex error -->

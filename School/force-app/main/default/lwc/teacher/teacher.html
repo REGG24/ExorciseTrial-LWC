@@ -27,9 +27,17 @@
         <!--Teachers table-->
         <div class="slds-m-around_medium">
             <template if:true={teacher.data}>
-                <lightning-datatable key-field="Id" data={currentPageData} columns={columns} onsave={handleSave}
+                <!--With custom lookup -->
+                <!--<lightning-datatable key-field="Id" data={currentPageData} columns={columns} onsave={handleSave}
                     draft-values={draftValues} onrowselection={getSelectedRecords}>
-                </lightning-datatable>
+                </lightning-datatable>-->
+
+                <!--With custom lookup -->
+                <c-poc-lightning-datatable key-field="Id" data={currentPageData} columns={columns} onsave={handleSave}
+                    draft-values={draftValues} onrowselection={getSelectedRecords}
+                    onlookupselect={handlelookupselectclassroom}>
+                </c-poc-lightning-datatable>
+
             </template>
             <template if:true={teacher.error}>
                 <!-- handle Apex error -->

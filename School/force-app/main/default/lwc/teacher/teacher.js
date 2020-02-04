@@ -17,11 +17,11 @@ import delSelectedStus from '@salesforce/apex/SchoolControllerLWC.deleteTeachers
 const COLS = [
     { label: 'First Name', fieldName: 'Name', editable: true },
     { label: 'Last Name', fieldName: 'Last_Name__c', editable: true },
-    { label: 'Classroom', fieldName: 'Classroom__c', editable: true, type: LightningElement }
+    { label: 'Classroom', fieldName: 'Classroom__c', editable: true, type: LightningElement },
+    { label: 'Classroom Edit', type: 'fileUpload', editable: true }//added to use lookup
 ];
 
 export default class Recordeditform extends LightningElement {
-
 
     //search   
     @api searchFilter = '';
@@ -30,6 +30,25 @@ export default class Recordeditform extends LightningElement {
         this.teacher = result;
         if (result.data) {
             this.data = result.data;
+
+            //added to put the name of the classroom
+            let currentData = [];
+            result.data.forEach((row) => {
+                let rowData = {};
+                rowData.Id = row.Id;
+                rowData.Name = row.Name;
+                rowData.Last_Name__c = row.Last_Name__c;
+                // Student related data
+                if (row.Classroom__r) {
+                    rowData.Classroom__c = row.Classroom__r.Name;
+                } else {
+                    rowData.Classroom__c = null;
+                }
+                currentData.push(rowData);
+            });
+            this.data = currentData;
+
+
         } else if (result.error) {
             this.error = result.error;
         }
@@ -48,8 +67,7 @@ export default class Recordeditform extends LightningElement {
     @track columns = COLS;
     @track draftValues = [];
 
-    @wire(getTeacherList)
-    teacher;
+    @track teacher;
 
     //delete
     @track buttonLabel = 'Delete';
@@ -57,7 +75,6 @@ export default class Recordeditform extends LightningElement {
     @track recordsCount = 0
     // non-reactive variables(delete)
     selectedRecords = [];
-    refreshTable;
 
 
 
@@ -85,13 +102,27 @@ export default class Recordeditform extends LightningElement {
     }
 
     //table(update)
+
+    //to update the classroom
+    @track selectedClassroomRecord;
+    // Event bubbles to grandparent and being handled here  
+    handlelookupselectclassroom(event) {
+        this.selectedClassroomRecord = event.detail;
+    }
+
     handleSave(event) {
 
         const fields = {};
         fields[ID_FIELD.fieldApiName] = event.detail.draftValues[0].Id;
         fields[FIRSTNAME_FIELD.fieldApiName] = event.detail.draftValues[0].Name;
         fields[LASTNAME_FIELD.fieldApiName] = event.detail.draftValues[0].Last_Name__c;
-        fields[CLASSROOM_FIELD.fieldApiName] = event.detail.draftValues[0].Classroom__c;
+        //fields[CLASSROOM_FIELD.fieldApiName] = event.detail.draftValues[0].Classroom__c;
+
+        if (this.selectedClassroomRecord) {
+            let Id = this.selectedClassroomRecord.Id;
+            window.console.log("Id classroom: " + Id);
+            fields[CLASSROOM_FIELD.fieldApiName] = Id;
+        }
 
         const recordInput = { fields };
 
@@ -107,32 +138,20 @@ export default class Recordeditform extends LightningElement {
                 // Clear all draft values
                 this.draftValues = [];
 
+                //update the classroom table that is in another component
+                this.updateClassroomsTable();
+
                 // Display fresh data in the datatable
                 return refreshApex(this.teacher);
             }).catch(error => {
                 this.dispatchEvent(
                     new ShowToastEvent({
-                        title: 'Error creating record',
+                        title: 'Error updating record, maybe you are trying to add a teacher in a classroom that has 5 students',
                         message: error.body.message,
                         variant: 'error'
                     })
                 );
             });
-    }
-
-    //delete
-    // retrieving the data using wire service
-    @wire(getTeacherList)
-    teachers(result) {
-        this.refreshTable = result;
-        if (result.data) {
-            this.data = result.data;
-            this.error = undefined;
-
-        } else if (result.error) {
-            this.error = result.error;
-            this.data = undefined;
-        }
     }
 
 
@@ -194,7 +213,7 @@ export default class Recordeditform extends LightningElement {
                 this.recordsCount = 0;
 
                 // refreshing table data using refresh apex
-                return refreshApex(this.refreshTable);
+                return refreshApex(this.teacher);
             })
             .catch(error => {
                 this.buttonLabel = 'Delete';
@@ -215,7 +234,7 @@ export default class Recordeditform extends LightningElement {
                 this.recordsCount = 0;
 
                 // refreshing table data using refresh apex
-                return refreshApex(this.refreshTable);
+                return refreshApex(this.teacher);
             });
     }
 
@@ -237,14 +256,6 @@ export default class Recordeditform extends LightningElement {
         });
     }
     get pagesList() {
-        /*
-        let mid = Math.floor(this.set_size / 2) + 1;
-        if (this.page > mid) {
-            return this.pages.slice(this.page - mid, this.page + mid - 1);
-        }
-        return this.pages.slice(0, this.set_size);
-        */
-        //my idea:
         let pages = Math.ceil(this.data.length / this.perpage);
         let pages_list = [];
         for (let i = 0; i < pages; i++) {
@@ -265,26 +276,15 @@ export default class Recordeditform extends LightningElement {
     }
     setPages = (data) => {
         let numberOfPages = Math.ceil(data.length / this.perpage);
-        //window.console.log("data.length: " + data.length);
-        //window.console.log("numberOfPages: " + numberOfPages);
         for (let index = 1; index <= numberOfPages; index++) {
             this.pages.push(index);
         }
-        //window.console.log("See the content of pages");
-        //for (let index = 0; index < this.pages.length; index++) {
-        //    window.console.log("page 0: " + this.pages[index]);
-        //}
     }
     get hasPrev() {
         return this.page > 1;
     }
     get hasNext() {
-        //window.console.log("this.page: " + this.page);
-        //window.console.log("this.pages.length: " + this.pages.length);
-        //return this.page < this.pages.length  original
-        //window.console.log("data.length: " + this.data.length);
         let pages = Math.ceil(this.data.length / this.perpage);
-        //window.console.log("pages length (mio): " + pages);
         return this.page < pages;
     }
     onNext = () => {

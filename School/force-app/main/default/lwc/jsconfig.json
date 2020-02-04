@@ -9,6 +9,18 @@
             "c/generalSchool": [
                 "generalSchool/generalSchool.js"
             ],
+            "c/lookupItem": [
+                "lookupItem/lookupItem.js"
+            ],
+            "c/lookupSearch": [
+                "lookupSearch/lookupSearch.js"
+            ],
+            "c/lookupWrapperParent": [
+                "lookupWrapperParent/lookupWrapperParent.js"
+            ],
+            "c/pocLightningDatatable": [
+                "pocLightningDatatable/pocLightningDatatable.js"
+            ],
             "c/student": [
                 "student/student.js"
             ],

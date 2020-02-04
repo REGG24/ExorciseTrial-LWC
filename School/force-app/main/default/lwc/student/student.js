@@ -10,6 +10,8 @@ import { refreshApex } from '@salesforce/apex';
 import FIRSTNAME_FIELD from '@salesforce/schema/Student__c.Name';
 import LASTNAME_FIELD from '@salesforce/schema/Student__c.Last_Name__c';
 import CLASSROOM_FIELD from '@salesforce/schema/Student__c.Classroom__c';
+//import CLASSROOM_FIELD_NAME from '@salesforce/schema/Student__c.Classroom__r.Name';
+
 import ID_FIELD from '@salesforce/schema/Student__c.Id';
 
 import delSelectedStus from '@salesforce/apex/SchoolControllerLWC.deleteStudents';
@@ -18,8 +20,11 @@ import delSelectedStus from '@salesforce/apex/SchoolControllerLWC.deleteStudents
 const COLS = [
     { label: 'First Name', fieldName: 'Name', editable: true },
     { label: 'Last Name', fieldName: 'Last_Name__c', editable: true },
-    { label: 'Classroom', fieldName: 'Classroom__c', editable: true, type: LightningElement }
+    { label: 'Classroom Name', fieldName: 'Classroom__c' },
+    { label: 'Classroom Edit', type: 'fileUpload', editable: true }//added to use lookup
 ];
+
+
 
 export default class Recordeditform extends LightningElement {
 
@@ -31,6 +36,25 @@ export default class Recordeditform extends LightningElement {
         this.student = result;
         if (result.data) {
             this.data = result.data;
+
+            //added to put the name of the classroom
+            let currentData = [];
+            result.data.forEach((row) => {
+                let rowData = {};
+                rowData.Id = row.Id;
+                rowData.Name = row.Name;
+                rowData.Last_Name__c = row.Last_Name__c;
+                // Student related data
+                if (row.Classroom__r) {
+                    rowData.Classroom__c = row.Classroom__r.Name;
+                } else {
+                    rowData.Classroom__c = null;
+                }
+                currentData.push(rowData);
+            });
+            this.data = currentData;
+
+
         } else if (result.error) {
             this.error = result.error;
         }
@@ -49,8 +73,8 @@ export default class Recordeditform extends LightningElement {
     @track columns = COLS;
     @track draftValues = [];
 
-    @wire(getStudentList)
-    student;
+
+    @track student;
 
     //delete
     @track buttonLabel = 'Delete';
@@ -58,7 +82,7 @@ export default class Recordeditform extends LightningElement {
     @track recordsCount = 0
     // non-reactive variables(delete)
     selectedRecords = [];
-    refreshTable;
+
 
 
 
@@ -86,13 +110,25 @@ export default class Recordeditform extends LightningElement {
     }
 
     //table(update)
-    handleSave(event) {
 
+    @track selectedClassroomRecord;
+    // Event bubbles to grandparent and being handled here  
+    handlelookupselectclassroom(event) {
+        this.selectedClassroomRecord = event.detail;
+    }
+
+    handleSave(event) {
         const fields = {};
         fields[ID_FIELD.fieldApiName] = event.detail.draftValues[0].Id;
         fields[FIRSTNAME_FIELD.fieldApiName] = event.detail.draftValues[0].Name;
         fields[LASTNAME_FIELD.fieldApiName] = event.detail.draftValues[0].Last_Name__c;
-        fields[CLASSROOM_FIELD.fieldApiName] = event.detail.draftValues[0].Classroom__c;
+        //fields[CLASSROOM_FIELD.fieldApiName] = event.detail.draftValues[0].Classroom__c;
+
+        if (this.selectedClassroomRecord) {
+            let Id = this.selectedClassroomRecord.Id;
+            window.console.log("Id classroom: " + Id);
+            fields[CLASSROOM_FIELD.fieldApiName] = Id;
+        }
 
         const recordInput = { fields };
 
@@ -108,12 +144,15 @@ export default class Recordeditform extends LightningElement {
                 // Clear all draft values
                 this.draftValues = [];
 
+                //update the classroom table that is in another component
+                this.updateClassroomsTable();
+
                 // Display fresh data in the datatable
                 return refreshApex(this.student);
             }).catch(error => {
                 this.dispatchEvent(
                     new ShowToastEvent({
-                        title: 'Error creating record',
+                        title: 'Error updating record, maybe you are trying to add a student in a classroom that has 10 students',
                         message: error.body.message,
                         variant: 'error'
                     })
@@ -121,20 +160,6 @@ export default class Recordeditform extends LightningElement {
             });
     }
 
-    //delete
-    // retrieving the data using wire service
-    @wire(getStudentList)
-    students(result) {
-        this.refreshTable = result;
-        if (result.data) {
-            this.data = result.data;
-            this.error = undefined;
-
-        } else if (result.error) {
-            this.error = result.error;
-            this.data = undefined;
-        }
-    }
 
 
     // Getting selected rows 
@@ -190,12 +215,13 @@ export default class Recordeditform extends LightningElement {
                 );
 
                 // Clearing selected row indexs 
-                this.template.querySelector('lightning-datatable').selectedRows = [];
+                //this.template.querySelector('lightning-datatable').selectedRows = [];
+                this.template.querySelector('c-poc-lightning-datatable').selectedRows = [];
 
                 this.recordsCount = 0;
 
                 // refreshing table data using refresh apex
-                return refreshApex(this.refreshTable);
+                return refreshApex(this.student);
             })
             .catch(error => {
                 this.buttonLabel = 'Delete';
@@ -212,12 +238,13 @@ export default class Recordeditform extends LightningElement {
 
 
                 // Clearing selected row indexs 
-                this.template.querySelector('lightning-datatable').selectedRows = [];
+                //this.template.querySelector('lightning-datatable').selectedRows = [];
+                this.template.querySelector('c-poc-lightning-datatable').selectedRows = [];
 
                 this.recordsCount = 0;
 
                 // refreshing table data using refresh apex
-                return refreshApex(this.refreshTable);
+                return refreshApex(this.student);
 
             });
     }

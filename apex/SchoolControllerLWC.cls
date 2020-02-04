@@ -6,11 +6,11 @@ public class SchoolControllerLWC {
         System.debug('searchFilter before everything: '+searchFilter);
         
         if(String.isBlank(searchFilter) || searchFilter == null || searchFilter == '' || searchFilter == ' '){
-            return [SELECT Id, Name, Last_Name__c, Classroom__c FROM Student__c];
+            return [SELECT Id, Name, Last_Name__c, Classroom__c, Classroom__r.Name FROM Student__c];
         }else{
             searchFilter += '%';
             System.debug('searchFilter: '+searchFilter);
-            return [SELECT Id, Name, Last_Name__c, Classroom__c FROM Student__c WHERE NAME LIKE :searchFilter];
+            return [SELECT Id, Name, Last_Name__c, Classroom__c, Classroom__r.Name FROM Student__c WHERE NAME LIKE :searchFilter];
         }
         
         
@@ -22,7 +22,7 @@ public class SchoolControllerLWC {
             list<Student__c> lstConsToDelete = new list<Student__c>();
             System.debug('lstConIds ====> '+lstConIds);
             for(Id idCon : lstConIds) {
-                lstConsToDelete.add(new Student__c(Id = idCon));
+                    lstConsToDelete.add(new Student__c(Id = idCon));                                           
             }
             if(!lstConsToDelete.isEmpty()) {
                 delete lstConsToDelete;
@@ -72,14 +72,12 @@ public class SchoolControllerLWC {
         System.debug('searchFilter before everything: '+searchFilter);
         
         if(String.isBlank(searchFilter) || searchFilter == null || searchFilter == '' || searchFilter == ' '){
-            return [SELECT Id, Name, Last_Name__c, Classroom__c FROM Teacher__c];
+            return [SELECT Id, Name, Last_Name__c, Classroom__c, Classroom__r.Name FROM Teacher__c];
         }else{
             searchFilter += '%';
             System.debug('searchFilter: '+searchFilter);
-            return [SELECT Id, Name, Last_Name__c, Classroom__c FROM Teacher__c WHERE NAME LIKE :searchFilter];
-        }
-        
-        
+            return [SELECT Id, Name, Last_Name__c, Classroom__c, Classroom__r.Name FROM Teacher__c WHERE NAME LIKE :searchFilter];
+        }                
     }
     
     @AuraEnabled
@@ -100,6 +98,15 @@ public class SchoolControllerLWC {
     }
     
     
+    @AuraEnabled(cacheable=true)  
+   public static List<Account> getLookupSerachRecords(String searchString, String selectedSObject, Integer recordLimit) {  
+     if(searchString != null && searchString != ''){  
+       String query = 'select Name, Id from ' + selectedSObject;  
+         query += ' where Name like \'%'+ searchString +'%\' ';  
+       query+= ' limit ' + recordLimit;  
+       return Database.query(query);  
+     }  
+     return null;  
+   }  
     
-
 }
