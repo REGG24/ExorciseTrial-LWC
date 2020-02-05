@@ -118,10 +118,19 @@ export default class Recordeditform extends LightningElement {
         fields[LASTNAME_FIELD.fieldApiName] = event.detail.draftValues[0].Last_Name__c;
         //fields[CLASSROOM_FIELD.fieldApiName] = event.detail.draftValues[0].Classroom__c;
 
+        const classroom_name = event.detail.draftValues[0].Classroom__c;
+        window.console.log('classroom_name: ' + classroom_name);
+
+        //if the classroom edit is  not empty
         if (this.selectedClassroomRecord) {
             let Id = this.selectedClassroomRecord.Id;
             window.console.log("Id classroom: " + Id);
             fields[CLASSROOM_FIELD.fieldApiName] = Id;
+            this.selectedClassroomRecord = null;
+        }
+        //if the classroom name is empty
+        else if (!classroom_name) {
+            fields[CLASSROOM_FIELD.fieldApiName] = null;
         }
 
         const recordInput = { fields };
@@ -208,7 +217,9 @@ export default class Recordeditform extends LightningElement {
                 );
 
                 // Clearing selected row indexs 
-                this.template.querySelector('lightning-datatable').selectedRows = [];
+                //this.template.querySelector('lightning-datatable').selectedRows = [];
+                this.template.querySelector('c-poc-lightning-datatable').selectedRows = [];
+
 
                 this.recordsCount = 0;
 
@@ -229,7 +240,8 @@ export default class Recordeditform extends LightningElement {
                 );
 
                 // Clearing selected row indexs 
-                this.template.querySelector('lightning-datatable').selectedRows = [];
+                //this.template.querySelector('lightning-datatable').selectedRows = [];
+                this.template.querySelector('c-poc-lightning-datatable').selectedRows = [];
 
                 this.recordsCount = 0;
 
